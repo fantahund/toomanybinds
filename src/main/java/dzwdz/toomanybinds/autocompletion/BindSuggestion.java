@@ -1,25 +1,23 @@
 package dzwdz.toomanybinds.autocompletion;
 
-import de.siphalor.amecs.api.PriorityKeyBinding;
 import dzwdz.toomanybinds.mixinterface.KeyBindingMixinterface;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class BindSuggestion {
     public Text name;
     public Text category;
     public KeyBinding bind;
-    private String searchable;
+    private final String searchable;
     public boolean favorite = false;
 
     public BindSuggestion(KeyBinding bind) {
         this.bind = bind;
-        name = new TranslatableText(bind.getTranslationKey());
-        category = new TranslatableText(bind.getCategory());
+        name = Text.translatable(bind.getTranslationKey());
+        category = Text.translatable(bind.getCategory());
         searchable = (name.getString() + " " + category.getString()).toLowerCase();
     }
 
@@ -37,11 +35,11 @@ public class BindSuggestion {
         LauncherCompletion.addToHistory(getId());
 
         // workarounds for keybinds that are handled in dumb, incompatible ways
-        if (bind == options.keyFullscreen) {
+        if (bind == options.fullscreenKey) {
             mc.getWindow().toggleFullscreen();
-            mc.options.fullscreen = mc.getWindow().isFullscreen();
+            mc.options.getFullscreen().setValue(mc.getWindow().isFullscreen());
             mc.options.write();
-        } else if (bind == options.keyScreenshot) {
+        } else if (bind == options.screenshotKey) {
             ScreenshotRecorder.saveScreenshot(mc.runDirectory, mc.getFramebuffer(), (text) -> {
                 mc.execute(() -> {
                     mc.inGameHud.getChatHud().addMessage(text);
@@ -52,7 +50,6 @@ public class BindSuggestion {
             // amecs compat
             bind.setPressed(true);
             bind.setPressed(false);
-            if (bind instanceof PriorityKeyBinding) ((PriorityKeyBinding)bind).onPressedPriority();
         }
     }
 
