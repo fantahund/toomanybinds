@@ -62,7 +62,7 @@ public class LauncherScreen extends Screen {
         int lineAmt = Math.min(suggestions.size(), TooManyBinds.config.maxSuggestions);
         int bgColor = (int)Math.round(TooManyBinds.config.bgOpacity * 255) * 0x1000000;
         fill(matrices, getX()-1, getY()-1, getX()+w-1, getY()+lineHeight-2 + lineAmt*lineHeight, bgColor);
-        textField.setTextFieldFocused(true);
+        textField.setFocused(true);
         textField.render(matrices, mouseX, mouseY, delta);
 
         int y = getY();
