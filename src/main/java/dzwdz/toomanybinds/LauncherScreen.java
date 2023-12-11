@@ -5,6 +5,7 @@ import dzwdz.toomanybinds.autocompletion.LauncherCompletion;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.NarratorManager;
@@ -57,13 +58,13 @@ public class LauncherScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         List<BindSuggestion> suggestions = completion.getSuggestions();
         int lineAmt = Math.min(suggestions.size(), TooManyBinds.config.maxSuggestions);
         int bgColor = (int)Math.round(TooManyBinds.config.bgOpacity * 255) * 0x1000000;
-        fill(matrices, getX()-1, getY()-1, getX()+w-1, getY()+lineHeight-2 + lineAmt*lineHeight, bgColor);
+        drawContext.fill(getX()-1, getY()-1, getX()+w-1, getY()+lineHeight-2 + lineAmt*lineHeight, bgColor);
         textField.setFocused(true);
-        textField.render(matrices, mouseX, mouseY, delta);
+        textField.render(drawContext, mouseX, mouseY, delta);
 
         int y = getY();
         for (int i = optionOffset; i - optionOffset < TooManyBinds.config.maxSuggestions; i++) {
@@ -73,18 +74,18 @@ public class LauncherScreen extends Screen {
             y += lineHeight;
 
             if (sg.favorite) {
-                fill(matrices, getX()-3, y-2, getX()-1, y+lineHeight-2, HIGHLIGHT_COLOR | bgColor);
+                drawContext.fill(getX()-3, y-2, getX()-1, y+lineHeight-2, HIGHLIGHT_COLOR | bgColor);
             }
 
             // draw the bind name
-            drawTextWithShadow(matrices, textRenderer, sg.name, getX(), y, i == selected ? HIGHLIGHT_COLOR : SUGGESTION_COLOR);
+            drawContext.drawText(textRenderer, sg.name, getX(), y, i == selected ? HIGHLIGHT_COLOR : SUGGESTION_COLOR, true);
 
             // draw the bind category
             int textWidth = textRenderer.getWidth(sg.category)+2;
-            drawTextWithShadow(matrices, textRenderer, sg.category, getX()+w-textWidth, y, SUGGESTION_COLOR);
+            drawContext.drawText(textRenderer, sg.category, getX()+w-textWidth, y, SUGGESTION_COLOR, false);
         }
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(drawContext, mouseX, mouseY, delta);
     }
 
     public void switchSelection(int by) {
@@ -149,7 +150,7 @@ public class LauncherScreen extends Screen {
 
     @Override
     public void tick() {
-        textField.tick();
+        super.tick();
     }
 
     @Override
